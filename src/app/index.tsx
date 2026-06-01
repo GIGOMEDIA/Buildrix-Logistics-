@@ -1,306 +1,218 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, StatusBar, Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, View, Text, Animated, Easing, Dimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
-export default function BuildrixMapHomeScreen() {
+export default function SplashScreen() {
   const router = useRouter();
+  
+  // Animation values
+  const logoScale = useRef(new Animated.Value(0.3)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const textOpacity = useRef(new Animated.Value(0)).current;
+  
+  const dot1Opacity = useRef(new Animated.Value(0.3)).current;
+  const dot2Opacity = useRef(new Animated.Value(0.3)).current;
+  const dot3Opacity = useRef(new Animated.Value(0.3)).current;
 
-  const initialRegion = {
-    latitude: 6.4281,
-    longitude: 3.4219,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  };
+  useEffect(() => {
+    // Logo entrance animation
+    Animated.parallel([
+      Animated.timing(logoScale, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.out(Easing.back(1.5)),
+        useNativeDriver: true,
+      }),
+      Animated.timing(logoOpacity, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
-  const mapStyle = [
-    { "elementType": "geometry", "stylers": [{ "color": "#212a37" }] },
-    { "elementType": "labels.text.fill", "stylers": [{ "color": "#746855" }] },
-    { "featureType": "administrative.locality", "elementType": "labels.text.fill", "stylers": [{ "color": "#d59563" }] },
-    { "featureType": "road", "elementType": "geometry", "stylers": [{ "color": "#304a7d" }] },
-    { "featureType": "road", "elementType": "geometry.stroke", "stylers": [{ "color": "#1f2835" }] },
-    { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#17263c" }] }
-  ];
+    // Footer text fade-in
+    Animated.timing(textOpacity, {
+      toValue: 1,
+      duration: 1200,
+      delay: 500,
+      useNativeDriver: true,
+    }).start();
+
+    // Loading dots pulsing animation loop
+    const createDotAnimation = (dot: Animated.Value, delay: number) => {
+      return Animated.loop(
+        Animated.sequence([
+          Animated.timing(dot, {
+            toValue: 1,
+            duration: 400,
+            delay: delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(dot, {
+            toValue: 0.3,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+    };
+
+    const anim1 = createDotAnimation(dot1Opacity, 0);
+    const anim2 = createDotAnimation(dot2Opacity, 150);
+    const anim3 = createDotAnimation(dot3Opacity, 300);
+
+    anim1.start();
+    anim2.start();
+    anim3.start();
+
+    // Navigation timer
+    const navigateTimer = setTimeout(() => {
+      router.replace('/onboarding');
+    }, 3800);
+
+    return () => {
+      clearTimeout(navigateTimer);
+      anim1.stop();
+      anim2.stop();
+      anim3.stop();
+    };
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-
-      {/* Map Background View */}
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={styles.map}
-        initialRegion={initialRegion}
-        customMapStyle={mapStyle}
-        showsUserLocation={true}
-      />
-
-      {/* Dynamic Header Overlay Container */}
-      <SafeAreaView style={styles.headerOverlay} edges={['top']}>
-        <View style={styles.topMenuBar}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="menu-outline" size={26} color="#024C43" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="notifications-outline" size={24} color="#024C43" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.brandTitleContainer}>
-          <Text style={styles.brandTitleText}>Buildrix</Text>
-          <Text style={styles.brandSubtitleText}>Dispatch</Text>
-        </View>
-
-        {/* Floating Custom Search Bar */}
-        <View style={styles.searchBarContainer}>
-          <Ionicons name="search-outline" size={20} color="#9CA3AF" style={styles.searchIcon} />
-          <TextInput 
-            placeholder="Where to?" 
-            placeholderTextColor="#9CA3AF"
-            style={styles.searchInput}
-            editable={true}
-          />
-          <TouchableOpacity style={styles.historyButton}>
-            <Ionicons name="time-outline" size={20} color="#374151" />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-
-      {/* Slide-Up Bottom Sheet Destination Card Container */}
-      <View style={styles.bottomSheetCard}>
-        <View style={styles.dragIndicator} />
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Destinations</Text>
-          <TouchableOpacity>
-            <Text style={styles.viewAllText}>View All</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Recent Location Items */}
-        <View style={styles.destinationList}>
-          {/* Home Destination Item */}
-          <TouchableOpacity style={styles.destinationItem}>
-            <View style={styles.iconWrapper}>
-              <Ionicons name="home-outline" size={20} color="#024C43" />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {/* Stylized Checkmark Logo */}
+        <Animated.View style={[styles.logoContainer, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
+          <View style={styles.logoSymbol}>
+            {/* The stylized "R" checkmark letter */}
+            <View style={styles.verticalBar} />
+            <View style={styles.loopContainer}>
+              <View style={styles.loop} />
             </View>
-            <View style={styles.destinationDetails}>
-              <Text style={styles.destinationName}>Home</Text>
-              <Text style={styles.destinationAddress} numberOfLines={1}>
-                12, Admiralty Way, Lekki Phase 1
-              </Text>
+            <View style={styles.checkmarkLegContainer}>
+              <View style={styles.checkmarkLeg} />
             </View>
-            <Ionicons name="chevron-forward-outline" size={16} color="#E5E7EB" />
-          </TouchableOpacity>
-
-          {/* Office Destination Item */}
-          <TouchableOpacity style={styles.destinationItem}>
-            <View style={styles.iconWrapper}>
-              <Ionicons name="briefcase-outline" size={20} color="#024C43" />
-            </View>
-            <View style={styles.destinationDetails}>
-              <Text style={styles.destinationName}>Office</Text>
-              <Text style={styles.destinationAddress} numberOfLines={1}>
-                Central Business District, Alausa
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward-outline" size={16} color="#E5E7EB" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Primary Call To Action Callout Action Button */}
-        <TouchableOpacity 
-          style={styles.primaryActionButton}
-          onPress={() => router.push('/dashboard')} 
-        >
-          <View style={styles.buttonInner}>
-            <Ionicons name="add-circle" size={22} color="#FFFFFF" style={styles.btnIcon} />
-            <Text style={styles.primaryButtonText}>New Delivery</Text>
           </View>
-        </TouchableOpacity>
+        </Animated.View>
+
+        {/* Three Loading Dots */}
+        <View style={styles.dotsContainer}>
+          <Animated.View style={[styles.dot, { opacity: dot1Opacity }]} />
+          <Animated.View style={[styles.dot, { opacity: dot2Opacity }]} />
+          <Animated.View style={[styles.dot, { opacity: dot3Opacity }]} />
+        </View>
       </View>
-    </View>
+
+      {/* Footer Branding */}
+      <Animated.View style={[styles.footer, { opacity: textOpacity }]}>
+        <Text style={styles.tagline}>FAST  •  RELIABLE  •  SECURE</Text>
+        <Text style={styles.copyright}>© 2026 Buildrix Logistics v2.0</Text>
+      </Animated.View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#024C43', 
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  map: {
-    width: width,
-    height: height * 0.65,
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 40,
+  },
+  logoSymbol: {
+    width: 90,
+    height: 90,
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // High-fidelity stylized checkmark letter "R" build
+  verticalBar: {
+    position: 'absolute',
+    left: 20,
+    top: 15,
+    width: 14,
+    height: 60,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 7,
+  },
+  loopContainer: {
+    position: 'absolute',
+    left: 20,
+    top: 15,
+    width: 48,
+    height: 36,
+    overflow: 'hidden',
+  },
+  loop: {
+    width: 48,
+    height: 36,
+    borderWidth: 14,
+    borderColor: '#FFFFFF',
+    borderRadius: 18,
+    backgroundColor: 'transparent',
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
   },
-  headerOverlay: {
+  checkmarkLegContainer: {
+    position: 'absolute',
+    left: 32,
+    top: 40,
+    width: 40,
+    height: 40,
+    overflow: 'hidden',
+  },
+  checkmarkLeg: {
+    width: 14,
+    height: 45,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 7,
     position: 'absolute',
     top: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 20,
-    zIndex: 10,
+    left: 8,
+    transform: [{ rotate: '-35deg' }],
   },
-  topMenuBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  iconButton: {
-    padding: 6,
-  },
-  brandTitleContainer: {
-    marginTop: 4,
-    paddingLeft: 6,
-  },
-  brandTitleText: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#024C43',
-    lineHeight: 32,
-  },
-  brandSubtitleText: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#024C43',
-    lineHeight: 32,
-  },
-  searchBarContainer: {
+  dotsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 20,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: '#FFFFFF',
-    borderRadius: 30,
-    marginTop: 20,
-    paddingHorizontal: 16,
-    height: 54,
-    shadowColor: '#000',
-    shadowOffset: { 
-        width: 0, 
-        height: 10 
-      },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    elevation: 8,
   },
-  searchIcon: {
-    marginRight: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#1F2937',
-    fontWeight: '500',
-  },
-  historyButton: {
-    padding: 4,
-  },
-  bottomSheetCard: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 36,
-    borderTopRightRadius: 36,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 34, 
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -10 },
-    shadowOpacity: 0.06,
-    shadowRadius: 24,
-    elevation: 10,
-  },
-  dragIndicator: {
-    width: 38,
-    height: 4,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  footer: {
     alignItems: 'center',
-    marginBottom: 20,
+    paddingBottom: 24,
+    gap: 8,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#024C43',
-  },
-  viewAllText: {
+  tagline: {
+    color: 'rgba(255, 255, 255, 0.7)',
     fontSize: 12,
     fontWeight: '700',
-    color: '#024C43',
+    letterSpacing: 2,
   },
-  destinationList: {
-    gap: 16,
-    marginBottom: 28,
-  },
-  destinationItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-  },
-  iconWrapper: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#F3F4F6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 14,
-  },
-  destinationDetails: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  destinationName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1F2937',
-    marginBottom: 2,
-  },
-  destinationAddress: {
-    fontSize: 13,
-    color: '#6B7280',
-    fontWeight: '500',
-    width: width * 0.65,
-  },
-  primaryActionButton: {
-    backgroundColor: '#013220', 
-    height: 54,
-    borderRadius: 27,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#013220',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  buttonInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnIcon: {
-    marginRight: 8,
-  },
-  primaryButtonText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+  copyright: {
+    color: 'rgba(255, 255, 255, 0.4)',
+    fontSize: 11,
+    fontWeight: '400',
   },
 });
