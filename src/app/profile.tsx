@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Wallet() {
+export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Wallet</Text>
+        <Text style={styles.title}>Account Profile</Text>
         <Text style={styles.subtitle}>Under Construction • Buildrix Logistics</Text>
       </View>
     </SafeAreaView>
