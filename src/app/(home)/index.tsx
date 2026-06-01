@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, StatusBar, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+// Commented out map imports to prevent build crashes
+// import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -10,6 +11,7 @@ const { width, height } = Dimensions.get('window');
 export default function HomeScreen() {
   const router = useRouter();
 
+  /*
   const initialRegion = {
     latitude: 6.4281,
     longitude: 3.4219,
@@ -25,19 +27,23 @@ export default function HomeScreen() {
     { "featureType": "road", "elementType": "geometry.stroke", "stylers": [{ "color": "#1f2835" }] },
     { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#17263c" }] }
   ];
+  */
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
-      {/* Map Background View */}
-      <MapView
+      {/* Map Background View - Commented out for local rebuild stability */}
+      {/* <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={initialRegion}
         customMapStyle={mapStyle}
         showsUserLocation={true}
       />
+      */}
+
+      <View style={[styles.map, { backgroundColor: '#40795e' }]} />
 
       {/* Dynamic Header Overlay Container */}
       <SafeAreaView style={styles.headerOverlay} edges={['top']}>
@@ -51,8 +57,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.brandTitleContainer}>
-          <Text style={styles.brandTitleText}>Buildrix</Text>
-          <Text style={styles.brandSubtitleText}>Dispatch</Text>
+          <Text style={styles.brandTitleText}>Buildrix Dispatch</Text>
         </View>
 
         {/* Floating Custom Search Bar */}
@@ -70,7 +75,6 @@ export default function HomeScreen() {
         </View>
       </SafeAreaView>
 
-      {/* Slide-Up Bottom Sheet Destination Card Container */}
       <View style={styles.bottomSheetCard}>
         <View style={styles.dragIndicator} />
 
@@ -81,9 +85,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Recent Location Items */}
         <View style={styles.destinationList}>
-          {/* Home Destination Item */}
           <TouchableOpacity style={styles.destinationItem}>
             <View style={styles.iconWrapper}>
               <Ionicons name="home-outline" size={20} color="#024C43" />
@@ -97,7 +99,6 @@ export default function HomeScreen() {
             <Ionicons name="chevron-forward-outline" size={16} color="#E5E7EB" />
           </TouchableOpacity>
 
-          {/* Office Destination Item */}
           <TouchableOpacity style={styles.destinationItem}>
             <View style={styles.iconWrapper}>
               <Ionicons name="briefcase-outline" size={20} color="#024C43" />
@@ -112,10 +113,9 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Primary Call To Action Callout Action Button */}
         <TouchableOpacity 
           style={styles.primaryActionButton}
-          onPress={() => router.push('/dashboard')} 
+          onPress={() => router.push('')} 
         >
           <View style={styles.buttonInner}>
             <Ionicons name="add-circle" size={22} color="#FFFFFF" style={styles.btnIcon} />
@@ -166,12 +166,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#024C43',
     lineHeight: 32,
-  },
-  brandSubtitleText: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#024C43',
-    lineHeight: 32,
+    alignSelf: 'flex-start',
   },
   searchBarContainer: {
     flexDirection: 'row',
