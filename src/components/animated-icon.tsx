@@ -80,16 +80,18 @@ const glowKeyframe = new Keyframe({
   },
 });
 
+const ExpoImage = Image as any;
+
 export function AnimatedIcon() {
   return (
     <View style={styles.iconContainer}>
       <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
-        <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
+        <ExpoImage style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
       </Animated.View>
 
       <Animated.View entering={keyframe.duration(DURATION)} style={styles.background} />
       <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
+        <ExpoImage style={styles.image} source={require('@/assets/images/expo-logo.png')} />
       </Animated.View>
     </View>
   );
@@ -119,14 +121,14 @@ const styles = StyleSheet.create({
   },
   background: {
     borderRadius: 40,
-    experimental_backgroundImage: `linear-gradient(180deg, #3C9FFE, #0274DF)`,
+    experimental_backgroundImage: `linear-gradient(180deg, #10B981, #0B4A3A)`,
     width: 128,
     height: 128,
     position: 'absolute',
   },
   backgroundSolidColor: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
+    ...(StyleSheet.absoluteFill as any),
+    backgroundColor: '#0B4A3A',
     zIndex: 1000,
   },
 });
