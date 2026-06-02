@@ -1,3 +1,4 @@
+import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -11,7 +12,9 @@ export default function RootLayout() {
         <Stack.Screen name="login" />
         <Stack.Screen name="signup" />
         <Stack.Screen name="otp" />
+        <Stack.Screen name="(home)" />
         <Stack.Screen name="dashboard" />
+        <Stack.Screen name="(main)" />
       </Stack>
     </>
   );

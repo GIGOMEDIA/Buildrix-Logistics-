@@ -2,6 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated, Easing, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+
+const { width, height } = Dimensions.get('window');
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -115,8 +118,7 @@ export default function SplashScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#024C43', // Brand dark green/teal
+    backgroundColor: '#024C43', 
     justifyContent: 'space-between',
     alignItems: 'center',
   },
